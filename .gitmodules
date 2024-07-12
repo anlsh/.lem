@@ -1,0 +1,3 @@
+[submodule "plugins/lem-pareto"]
+	path = plugins/lem-pareto
+	url = git@github.com:40ants/lem-pareto.git
