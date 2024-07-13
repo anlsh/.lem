@@ -35,13 +35,27 @@
   ("Space b i" 'lem/list-buffers:list-buffers)
   ("Space b d" 'kill-current-buffer))
 
-(asdf:load-system :lem-pareto)
+(let ((compile-keymap (make-keymap :name "lisp-compile-keymap"))
+      (macro-keymap (make-keymap :name "lisp-macro-keymap"))
+      (local-keymap (make-keymap :name "lisp-local-leader-keymap")))
+  ;; Compile keymap
+  (define-key compile-keymap "c" 'lem-lisp-mode:lisp-compile-defun)
+  (define-key compile-keymap "l" 'lem-lisp-mode:lisp-compile-and-load-file)
+  ;; Macro keymap
+  (define-key macro-keymap "e" 'lem-lisp-mode/macroexpand:lisp-macrostep-expand)
+  (define-key macro-keymap "a" 'lem-lisp-mode/macroexpand:lisp-macroexpand-all)
+  ;; Set up the local leader keymap
+  (define-key local-keymap "c" compile-keymap)
+  (define-key local-keymap "m" macro-keymap)
+  (define-key local-keymap "r r" 'lem-lisp-mode:lisp-switch-to-repl-buffer)
+  ;; Bind to , as local leader in evil mode!
+  (defmethod lem-vi-mode/core:mode-specific-keymaps ((mode lem-lisp-mode:lisp-mode))
+    (let ((localleader (make-keymap :name "lisp-localleader-keymap")))
+      (define-key localleader "," local-keymap)
+      (list localleader))))
+
 (add-hook *find-file-hook*
           (lambda (buffer)
             (when (eq (buffer-major-mode buffer)
                       'lem-lisp-mode:lisp-mode)
-              (change-buffer-mode buffer 'lem-paredit-mode:paredit-mode t)
-              (change-buffer-mode buffer 'lem-pareto-mode:pareto-mode t))))
-
-;; Pareto likes messing with "d", that's kinda bad?
-(lem:define-key lem-pareto-mode:*pareto-mode-keymap* "d" nil)
+              (change-buffer-mode buffer 'lem-paredit-mode:paredit-mode t))))
