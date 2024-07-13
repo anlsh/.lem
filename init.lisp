@@ -1,6 +1,7 @@
 
 (in-package :lem-user)
 (lem-vi-mode:vi-mode)
+(ql:quickload :lem/legit)
 
 (let ((plugin-path "~/.lem/plugins"))
   (mapcar (lambda (x) (push x asdf:*central-registry*))
@@ -40,6 +41,7 @@
           ("b" (("i" 'lem/list-buffers:list-buffers)
                 ("d" 'kill-current-buffer)))
           ("Space" 'execute-command)
+          ("g g" 'lem/legit:legit-status)
           ;; Projects
           ("p" (("f" 'project-find-file)
                 ("c" 'lem-core/commands/project:project-save)
@@ -51,7 +53,6 @@
                   ("d" 'describe))))))
   (define-keys lem-vi-mode:*normal-keymap*
     ("Space" doom-normal-keymap)))
-
 
 (defparameter *lisp-leader-keymap*
   (define-keys*
@@ -76,5 +77,3 @@
             (when (eq (buffer-major-mode buffer)
                       'lem-lisp-mode:lisp-mode)
               (change-buffer-mode buffer 'lem-paredit-mode:paredit-mode t))))
-
-(ql:quickload :lem/legit)
