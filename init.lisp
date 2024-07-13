@@ -34,41 +34,39 @@
 
 (defparameter *doom-normal-keymap*
   (define-keys*
+    ;; Files
     ("f" (("f" 'find-file)
           ("s" 'save-current-buffer)))
+    ;; Buffers
     ("b" (("i" 'lem/list-buffers:list-buffers)
           ("d" 'kill-current-buffer)))
     ("Space" 'execute-command)
+    ;; Projects
     ("p" (("f" 'project-find-file)))
+    ;; Help/describe
     ("h d" (("k" 'describe-key)
             ("b" 'describe-bindings)
             ("d" 'describe)))))
-
 (define-keys lem-vi-mode:*normal-keymap*
   ("Space" *doom-normal-keymap*))
 
-(let ((compile-keymap (make-keymap :name "lisp-compile-keymap"))
-      (macro-keymap (make-keymap :name "lisp-macro-keymap"))
-      (repl-keymap (make-keymap :name "lisp-repl-keymap"))
-      (local-keymap (make-keymap :name "lisp-local-leader-keymap")))
-  ;; Compile keymap
-  (define-key compile-keymap "c" 'lem-lisp-mode:lisp-compile-defun)
-  (define-key compile-keymap "l" 'lem-lisp-mode:lisp-compile-and-load-file)
-  ;; Macro keymap
-  (define-key macro-keymap "e" 'lem-lisp-mode/macroexpand:lisp-macrostep-expand)
-  (define-key macro-keymap "a" 'lem-lisp-mode/macroexpand:lisp-macroexpand-all)
-  ;; Repl keymap
-  (define-key repl-keymap "r" 'lem-lisp-mode:lisp-switch-to-repl-buffer)
-  (define-key repl-keymap "s" 'lem-lisp-mode/internal:lisp-listen-in-current-package)
-  ;; Set up the local leader keymap
-  (define-key local-keymap "c" compile-keymap)
-  (define-key local-keymap "m" macro-keymap)
-  (define-key local-keymap "r" repl-keymap)
-  ;; Bind to , as local leader in evil mode!
-  (defmethod lem-vi-mode/core:mode-specific-keymaps ((mode lem-lisp-mode:lisp-mode))
-    (let ((localleader (make-keymap :name "lisp-localleader-keymap")))
-      (define-key localleader "," local-keymap)
-      (list localleader))))
+(defparameter *lisp-leader-keymap*
+  (define-keys*
+    ;; Compilation
+    ("c" (("c" 'lem-lisp-mode:lisp-compile-defun)
+          ("r" 'lem-lisp-mode:lisp-compile-region)
+          ("l" 'lem-lisp-mode:lisp-compile-and-load-file)))
+    ;; Macros
+    ("m" (("e" 'lem-lisp-mode/macroexpand:lisp-macrostep-expand)
+          ("a" 'lem-lisp-mode/macroexpand:lisp-macroexpand-all)))
+    ;; Repl
+    ("r" (("r" 'lem-lisp-mode:lisp-switch-to-repl-buffer)
+          ("s" 'lem-lisp-mode/internal:lisp-listen-in-current-package)))
+    ))
+(defmethod lem-vi-mode/core:mode-specific-keymaps ((mode lem-lisp-mode:lisp-mode))
+  (let ((localleader (make-keymap :name "lisp-localleader-keymap")))
+    (define-key localleader "," *lisp-leader-keymap*)
+    (list localleader)))
 
 (add-hook *find-file-hook*
           (lambda (buffer)
