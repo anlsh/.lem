@@ -43,7 +43,7 @@
           ("Space" 'execute-command)
           ("g g" 'lem/legit:legit-status)
           ;; Projects
-          ("p" (("f" 'project-find-file)
+          ("p" (("f" 'lem-core/commands/project:project-find-file)
                 ("c" 'lem-core/commands/project:project-save)
                 ("d" 'lem-core/commands/project:project-unsave)
                 ("p" 'lem-core/commands/project:project-switch)))
