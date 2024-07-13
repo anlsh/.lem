@@ -29,26 +29,29 @@
                         (if (and (listp keymap-spec) (eq (first keymap-spec) 'quote))
                             `(define-key ,keymap-name ,bind ,keymap-spec)
                             `(define-key ,keymap-name ,bind (define-keys* ,@keymap-spec)))))
-       ,keymap-name))
-  )
+       ,keymap-name)))
 
-(defparameter *doom-normal-keymap*
-  (define-keys*
-    ;; Files
-    ("f" (("f" 'find-file)
-          ("s" 'save-current-buffer)))
-    ;; Buffers
-    ("b" (("i" 'lem/list-buffers:list-buffers)
-          ("d" 'kill-current-buffer)))
-    ("Space" 'execute-command)
-    ;; Projects
-    ("p" (("f" 'project-find-file)))
-    ;; Help/describe
-    ("h d" (("k" 'describe-key)
-            ("b" 'describe-bindings)
-            ("d" 'describe)))))
-(define-keys lem-vi-mode:*normal-keymap*
-  ("Space" *doom-normal-keymap*))
+(let ((doom-normal-keymap 
+        (define-keys*
+          ;; Files
+          ("f" (("f" 'find-file)
+                ("s" 'save-current-buffer)))
+          ;; Buffers
+          ("b" (("i" 'lem/list-buffers:list-buffers)
+                ("d" 'kill-current-buffer)))
+          ("Space" 'execute-command)
+          ;; Projects
+          ("p" (("f" 'project-find-file)
+                ("c" 'lem-core/commands/project:project-save)
+                ("d" 'lem-core/commands/project:project-unsave)
+                ("p" 'lem-core/commands/project:project-switch)))
+          ;; Help/describe
+          ("h d" (("k" 'describe-key)
+                  ("b" 'describe-bindings)
+                  ("d" 'describe))))))
+  (define-keys lem-vi-mode:*normal-keymap*
+    ("Space" doom-normal-keymap)))
+
 
 (defparameter *lisp-leader-keymap*
   (define-keys*
