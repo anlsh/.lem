@@ -21,19 +21,31 @@
 
 (define-command kill-current-buffer () ()  (lem-core/commands/window:kill-buffer (lem:current-buffer)))
 
+(defmacro define-keys* (&body args)
+  (alexandria:with-gensyms (keymap-name)
+    `(let ((,keymap-name (make-keymap)))
+       ,@(loop for c in args
+              collect (destructuring-bind (bind keymap-spec) c
+                        (if (and (listp keymap-spec) (eq (first keymap-spec) 'quote))
+                            `(define-key ,keymap-name ,bind ,keymap-spec)
+                            `(define-key ,keymap-name ,bind (define-keys* ,@keymap-spec)))))
+       ,keymap-name))
+  )
+
+(defparameter *doom-normal-keymap*
+  (define-keys*
+    ("f" (("f" 'find-file)
+          ("s" 'save-current-buffer)))
+    ("b" (("i" 'lem/list-buffers:list-buffers)
+          ("d" 'kill-current-buffer)))
+    ("Space" 'execute-command)
+    ("p" (("f" 'project-find-file)))
+    ("h d" (("k" 'describe-key)
+            ("b" 'describe-bindings)
+            ("d" 'describe)))))
+
 (define-keys lem-vi-mode:*normal-keymap*
-  ("Space f f" 'find-file)
-  ("Space f s" 'save-current-buffer)
-  ("Space Space" 'execute-command)
-  ("Space h d k" 'describe-key)
-  ("Space h d b" 'describe-bindings)
-  ("Space h d d" 'describe)
-  ("Space p f" 'project-find-file)
-  ("Space g g" 'legit-status)
-  ("Space c d" 'find-definitions)
-  ("Space w d" 'delete-active-window)
-  ("Space b i" 'lem/list-buffers:list-buffers)
-  ("Space b d" 'kill-current-buffer))
+  ("Space" *doom-normal-keymap*))
 
 (let ((compile-keymap (make-keymap :name "lisp-compile-keymap"))
       (macro-keymap (make-keymap :name "lisp-macro-keymap"))
@@ -63,3 +75,5 @@
             (when (eq (buffer-major-mode buffer)
                       'lem-lisp-mode:lisp-mode)
               (change-buffer-mode buffer 'lem-paredit-mode:paredit-mode t))))
+
+(ql:quickload :lem/legit)
