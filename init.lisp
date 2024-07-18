@@ -77,3 +77,23 @@
             (when (eq (buffer-major-mode buffer)
                       'lem-lisp-mode:lisp-mode)
               (change-buffer-mode buffer 'lem-paredit-mode:paredit-mode t))))
+
+(defun executables ()
+    (loop with path = (uiop:getenv "PATH")
+                  for p in (uiop:split-string path :separator ":")
+                  for dir = (probe-file p)
+                  when (uiop:directory-exists-p dir)
+                    append (uiop:directory-files dir)))
+
+(defun find-executable (name)
+    (find name (executables)
+                  :test #'equalp
+                          :key #'pathname-name))
+
+(let ((c-lsp "clangd"))
+  (if (not (find-executable c-lsp))
+      (message "[Config Warning] Can't set up LSP configuration for C! No clang")
+      (lem-lsp-mode:define-language-spec (c-spec lem-c-mode:c-mode)
+        :language-id "c"
+        :connection-mode :stdio
+        :command '("clangd"))))
