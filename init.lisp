@@ -39,7 +39,9 @@
                 ("s" 'save-current-buffer)))
           ;; Buffers
           ("b" (("i" 'lem/list-buffers:list-buffers)
-                ("d" 'kill-current-buffer)))
+                ("d" 'kill-current-buffer)
+                ("n" 'lem:next-buffer)
+                ("p" 'lem:previous-buffer)))
           ("Space" 'execute-command)
           ("g g" 'lem/legit:legit-status)
           ;; Projects
@@ -97,9 +99,10 @@
       (message "[Config Warning] Can't set up LSP configuration for C! No clang")
       (lem-lsp-mode:define-language-spec (c-spec lem-c-mode:c-mode)
         :language-id "c"
+        :root-uri-patterns '("compile-commands.json")
         :connection-mode :stdio
         :command '("clangd"))))
 
-(let ((google-init-file "~/.lem/google.lisp"))
-  (when (uiop:file-exists-p google-init-file)
-    (load google-init-file)))
+;; (let ((google-init-file "~/.lem/google.lisp"))
+;;   (when (uiop:file-exists-p google-init-file)
+;;     (load google-init-file)))
