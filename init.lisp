@@ -47,6 +47,8 @@
                 ("c" 'lem-core/commands/project:project-save)
                 ("d" 'lem-core/commands/project:project-unsave)
                 ("p" 'lem-core/commands/project:project-switch)))
+          ;; Windows
+          ("w" (("d" 'lem:delete-active-window)))
           ;; Help/describe
           ("h d" (("k" 'describe-key)
                   ("b" 'describe-bindings)
@@ -65,8 +67,8 @@
           ("a" 'lem-lisp-mode/macroexpand:lisp-macroexpand-all)))
     ;; Repl
     ("r" (("r" 'lem-lisp-mode:lisp-switch-to-repl-buffer)
-          ("s" 'lem-lisp-mode/internal:lisp-listen-in-current-package)))
-    ))
+          ("s" 'lem-lisp-mode/internal:lisp-listen-in-current-package)))))
+
 (defmethod lem-vi-mode/core:mode-specific-keymaps ((mode lem-lisp-mode:lisp-mode))
   (let ((localleader (make-keymap :name "lisp-localleader-keymap")))
     (define-key localleader "," *lisp-leader-keymap*)
@@ -97,3 +99,7 @@
         :language-id "c"
         :connection-mode :stdio
         :command '("clangd"))))
+
+(let ((google-init-file "~/.lem/google.lisp"))
+  (when (uiop:file-exists-p google-init-file)
+    (load google-init-file)))
