@@ -41,7 +41,7 @@
           ("b" (("i" 'lem/list-buffers:list-buffers)
                 ("d" 'kill-current-buffer)))
           ("Space" 'execute-command)
-;;          ("g g" 'lem/legit:legit-status)
+          ("g g" 'lem/legit:legit-status)
           ;; Projects
           ("p" (("f" 'lem-core/commands/project:project-find-file)
                 ("c" 'lem-core/commands/project:project-save)
