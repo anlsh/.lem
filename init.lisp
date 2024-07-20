@@ -32,6 +32,9 @@
                             `(define-key ,keymap-name ,bind (define-keys* ,@keymap-spec)))))
        ,keymap-name)))
 
+(defparameter *lsp-keymap*
+  (define-keys* ("d d" 'lem/language-mode:find-definitions)))
+
 (let ((doom-normal-keymap 
         (define-keys*
           ;; Files
@@ -50,7 +53,13 @@
                 ("d" 'lem-core/commands/project:project-unsave)
                 ("p" 'lem-core/commands/project:project-switch)))
           ;; Windows
-          ("w" (("d" 'lem:delete-active-window)))
+          ("w" (("d" 'lem:delete-active-window)
+                ("v" 'lem:split-active-window-vertically)
+                ("s" 'lem:split-active-window-horizontally)))
+          ;; Quitting
+          ("q" (("q" 'lem:exit-lem)))
+          ;; LSP Mode
+          ("c l" '*lsp-keymap*)
           ;; Help/describe
           ("h d" (("k" 'describe-key)
                   ("b" 'describe-bindings)
