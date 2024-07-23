@@ -54,8 +54,8 @@
                 ("p" 'lem-core/commands/project:project-switch)))
           ;; Windows
           ("w" (("d" 'lem:delete-active-window)
-                ("v" 'lem:split-active-window-vertically)
-                ("s" 'lem:split-active-window-horizontally)))
+                ("v" 'lem:split-active-window-horizontally)
+                ("s" 'lem:split-active-window-vertically)))
           ;; Quitting
           ("q" (("q" 'lem:exit-lem)))
           ;; LSP Mode
